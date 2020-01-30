@@ -50,7 +50,7 @@ class App extends React.Component {
           anything else after it. Benefit: gives you more control */}
                 {/* Exact will find the exact match of the url 
           and render it */}
-                <Header />
+                <Header currentUser={this.state.currentUser} />
                 <Switch>
                     <Route exact path='/' component={Homepage} />
                     <Route path='/shop' component={ShopPage} />
