@@ -41,6 +41,8 @@ class Directory extends Component {
                     linkUrl: 'shop/mens',
                 }
             ]
+
+            
         };
     }
 
