@@ -7,7 +7,7 @@ import Homepage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
 import Header from './components/header/header.component';
 import SigninSignup from './pages/signin-signup/signin-signup.component';
-import { auth } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 class App extends React.Component {
     constructor() {
@@ -32,8 +32,9 @@ class App extends React.Component {
         // component is mounted on our DOM.
         // but because it's an open subscription we want to
         // close it so we don't have memory leaks in our app.
-        auth.onAuthStateChanged((user) => {
-            this.setState({ currentUser: user });
+        auth.onAuthStateChanged(async user => {
+            // this.setState({ currentUser: user });
+            createUserProfileDocument(user);
             console.log(user);
         });
     }
