@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-
+import { connect } from 'react-redux';
 import './App.css';
 
 import Homepage from './pages/homepage/homepage.component';
@@ -8,45 +8,29 @@ import ShopPage from './pages/shop/shop.component';
 import Header from './components/header/header.component';
 import SigninSignup from './pages/signin-signup/signin-signup.component';
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
-
+import { setCurrentUser } from './redux/user/user.actions';
 class App extends React.Component {
-    constructor() {
-        super();
-
-        this.state = { currentUser: null };
-    }
-
     unsubscribeFromAuth = null;
 
     componentDidMount() {
+        const { setCurrentUser } = this.props;
         // Open Subscriber:
         // It's an open messaging system between our application
         // and our firebase app.
-        // Whenever any changes occur on firebase form any source
-        // related to this application, firebase sends out a message
-        // that says that the auth state has changed, the user has updated.
-        // Then it will give us this user and it will call it.
-        // This way we don't have to manually fetch every time to
-        // check if that status has changed.
-        // This connection is always open as long as our application
-        // component is mounted on our DOM.
-        // but because it's an open subscription we want to
-        // close it so we don't have memory leaks in our app.
         this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
             if (userAuth) {
                 const userRef = await createUserProfileDocument(userAuth);
 
                 userRef.onSnapshot((snapShot) => {
-                    this.setState({
+                    setCurrentUser({
                         currentUser: {
                             id: snapShot.id,
                             ...snapShot.data()
                         }
                     });
-                    console.log(this.state);
                 });
             } else {
-                this.setState({ currentUser: userAuth });
+                setCurrentUser({ userAuth });
             }
         });
     }
@@ -63,7 +47,7 @@ class App extends React.Component {
           anything else after it. Benefit: gives you more control */}
                 {/* Exact will find the exact match of the url 
           and render it */}
-                <Header currentUser={this.state.currentUser} />
+                <Header />
                 <Switch>
                     <Route exact path='/' component={Homepage} />
                     <Route path='/shop' component={ShopPage} />
@@ -74,4 +58,8 @@ class App extends React.Component {
     }
 }
 
-export default App;
+const mapDispatchToProps = (dispatch) => ({
+    setCurrentUser: (user) => dispatch(setCurrentUser(user))
+});
+
+export default connect(null, mapDispatchToProps)(App);
