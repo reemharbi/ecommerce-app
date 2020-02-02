@@ -32,10 +32,22 @@ class App extends React.Component {
         // component is mounted on our DOM.
         // but because it's an open subscription we want to
         // close it so we don't have memory leaks in our app.
-        auth.onAuthStateChanged(async user => {
-            // this.setState({ currentUser: user });
-            createUserProfileDocument(user);
-            console.log(user);
+        this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
+            if (userAuth) {
+                const userRef = await createUserProfileDocument(userAuth);
+
+                userRef.onSnapshot((snapShot) => {
+                    this.setState({
+                        currentUser: {
+                            id: snapShot.id,
+                            ...snapShot.data()
+                        }
+                    });
+                    console.log(this.state);
+                });
+            } else {
+                this.setState({ currentUser: userAuth });
+            }
         });
     }
 
