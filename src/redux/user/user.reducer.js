@@ -1,3 +1,5 @@
+import { UserActionTypes} from './user.types';
+
 const INITIAL_STATE = {
     currentUser: null
 };
@@ -8,7 +10,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
 // type is equal to SET_CURRENT_USER then i want to return
 // this new object out of this reducer function.
     switch (action.type) {
-        case 'SET_CURRENT_USER':
+        case UserActionTypes.SET_CURRENT_USER:
             return {
                 ...state,
                 currentUser: action.payload
